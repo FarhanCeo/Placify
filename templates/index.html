@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }} - My App</title>
+</head>
+<body>
+    <header>
+        <h1>Bismillahir Rahmanir Raheem </h1><h1>بسم الله الرحمن الرحيم</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('main.index') }}">Home</a></li>
+            <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+        </ul>
+    </nav>
+
+    <footer>
+        <p>&copy; 2023 My App</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Company List - My App</title>
+</head>
+<body>
+    
+    <h1>Company List</h1>
+    <ul>
+        {% for company in companies %}
+            <li>
+                <h2>{{ company['name'] }}</h2>
+                <p>{{ company['description'] }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
