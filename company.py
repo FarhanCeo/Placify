@@ -1,12 +1,13 @@
 from flask import Blueprint, render_template, request,url_for, redirect, session
 from flask_pymongo import MongoClient
 import datetime
+from dbconnect import * 
 
 company_bp = Blueprint('company', __name__)
 
 # Set up MongoDB connection
-client = MongoClient('mongodb://localhost:27017/')
-db = client['PMS_100']
+client = MongoClient(mongoclient)
+db = client[dbname]
 print(db)
 companies = db.companies.find()
 

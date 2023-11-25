@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, session, url_for
 from flask_pymongo import MongoClient
+from dbconnect import * 
 
 student_bp = Blueprint('student', __name__)
 
 # Set up MongoDB connection
-client = MongoClient('mongodb://localhost:27017/')
-db = client['PMS_100']
+client = MongoClient(mongoclient)
+db = client[dbname]
 print(db)
 
 # @student_bp.route('/student_info', methods=['GET', 'POST'])

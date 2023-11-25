@@ -1,13 +1,14 @@
 from flask import Blueprint, render_template,request,session, redirect, url_for
 from flask_pymongo import MongoClient
 import bcrypt
+from dbconnect import * 
 
 
 regisBP = Blueprint('auth', __name__)
 
 # Set up MongoDB connection
-client = MongoClient('mongodb://localhost:27017/')
-db = client['PMS_100']
+client = MongoClient(mongoclient)
+db = client[dbname]
 print(db)
 
 
