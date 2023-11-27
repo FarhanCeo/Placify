@@ -1,0 +1,136 @@
+Create ubuntu ec2 instance.
+
+connect to it via aws.
+
+Install Python Virtualenv:
+sudo apt-get update
+sudo apt-get install python3-venv  (y)
+
+Clone git repo: 
+git clone -b final https://github.com/FarhanCeo/Placify.git
+
+Change directory to Placify:
+cd Placify
+
+Create the virtual environment:
+python3 -m venv venv
+
+Activate the virtual environment:
+source venv/bin/activate
+
+install pip: sudo apt install python3-pip  (y)
+
+Install dependencies:
+pip install -r requirements1.txt
+
+pip install pip --upgrade
+pip install pyopenssl --upgrade
+
+Install MongoDB Community Edition on Ubuntu: https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/
+
+1. Import the public key used by the package management system.
+sudo apt-get install gnupg curl
+
+To import the MongoDB public GPG key from:
+curl -fsSL https://pgp.mongodb.com/server-7.0.asc | \
+   sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
+   --dearmor
+
+2. Create a list file for MongoDB.
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+
+3. Reload local package database.
+sudo apt-get update
+
+4. Install the MongoDB packages.
+sudo apt-get install -y mongodb-org
+
+Start MongoDB:
+sudo systemctl start mongod
+optional: sudo systemctl daemon-reload
+
+Verify that MongoDB has started successfully:
+sudo systemctl status mongod
+optional: sudo systemctl enable mongod
+
+Use MongoDB:
+mongosh
+
+
+Now create collections:
+db.createCollection("admin");
+db.createCollection("mails");
+db.createCollection("companies");
+db.createCollection("users");
+Now insert into Admin collections: db.admin.insert({"name":"admin","password":"admin"});
+exit
+
+You can edit dbconnect.py for uri and db name: nano dbconnect.py
+
+Verify if it works by running:
+python3 app.py
+
+
+Install Gunicorn:
+pip install gunicorn
+
+Run Gunicorn:
+gunicorn -b 0.0.0.0:8000 app:app 
+
+Gunicorn is running (Ctrl + C to exit gunicorn)!
+
+Systemd Unit file:
+sudo nano /etc/systemd/system/placify.service
+
+Add this into the file:
+------------------------------------------------
+[Unit]
+Description=Gunicorn instance for a Placify app
+After=network.target
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/Placify
+ExecStart=/home/ubuntu/Placify/venv/bin/gunicorn -b localhost:8000 app:app
+Restart=always
+[Install]
+WantedBy=multi-user.target
+--------------------------------------------------
+
+Now enable the service:
+sudo systemctl daemon-reload
+sudo systemctl start placify
+sudo systemctl enable placify
+
+check app is running:
+curl localhost:8000
+
+Run Nginx Webserver to accept and route request to Gunicorn Finally, we set up Nginx as a reverse-proxy to accept the requests from the user and route it to gunicorn.
+Install Nginx:
+sudo apt update
+sudo apt install nginx  (y)
+
+optional: 
+    sudo ufw app list
+    sudo ufw allow 'Nginx HTTP'
+    sudo ufw status
+
+Start the Nginx Service: (go to the Public IP address of your EC2 on the browser to see the default nginx landing page)
+sudo systemctl start nginx
+sudo systemctl enable nginx
+
+Edit the default file:
+sudo nano /etc/nginx/sites-available/default
+-------------------------------------------------
+upstream flaskhelloworld {
+    server 127.0.0.1:8000;
+}
+
+location / {
+    proxy_pass http://flaskhelloworld;
+}
+--------------------------------------------------
+Now restart the Nginx:
+sudo systemctl restart nginx
+
+Now the Placify app will be live with public ip address
